@@ -18,10 +18,9 @@
   "frameworks": ["arduino"],
   "platforms": ["espressif8266"],
   "export": {
-    "include": ["firmware/src", "firmware/include", "README.md"]
+    "include": ["src", "include", "README.md"]
   },
   "build": {
-    "srcDir": "firmware/src",
     "srcFilter": "+<*> -<test>"
   },
   "dependencies": [],
