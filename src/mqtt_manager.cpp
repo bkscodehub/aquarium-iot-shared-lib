@@ -66,7 +66,7 @@ void loopMQTT() {
   mqttClient.loop();
 }
 
-void publishMessage(const char* topic, const JsonDocument& doc) {
+void publishMessage(const char* topic, const DynamicJsonDocument& doc) {
   char buffer[256];
   serializeJson(doc, buffer);
   mqttClient.publish(topic, buffer);
