@@ -1,0 +1,29 @@
+{
+  "name": "aquarium-iot-shared-lib",
+  "version": "1.0.0",
+  "description": "Shared utility library for ESP8266/ESP12F-based aquarium IoT projects including MQTT and WiFi managers.",
+  "keywords": ["aquarium", "iot", "esp8266", "mqtt", "wifi", "esp12f", "controller"],
+  "authors": [
+    {
+      "name": "Karthikeyan",
+      "email": "karthikeyan.tandl@gmail.com",
+      "url": "https://github.com/bkscodehub",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bkscodehub/aquarium-iot-shared-lib"
+  },
+  "frameworks": ["arduino"],
+  "platforms": ["espressif8266"],
+  "export": {
+    "include": ["firmware/src", "firmware/include", "README.md"]
+  },
+  "build": {
+    "srcDir": "firmware/src",
+    "srcFilter": "+<*> -<test>"
+  },
+  "dependencies": [],
+  "license": "GPL-3.0"
+}
