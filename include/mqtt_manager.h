@@ -5,6 +5,6 @@
 
 void setupMQTT(const char* cmdTopic, const char* scheduleTopic);
 void loopMQTT();
-void publishMessage(const char* topic, const DynamicJsonDocument& doc);
+void publishMessage(const char* topic, const ArduinoJson::JsonDocument& doc);
 
 #endif
