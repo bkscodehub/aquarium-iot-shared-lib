@@ -2,7 +2,6 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include "mqtt_manager.h"
-#include "light_controller.h"
 
 WiFiClient espClient;
 PubSubClient mqttClient(espClient);
@@ -18,9 +17,9 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   }
 
   if (String(topic) == topicCmd) {
-    handleCommandMessage(msg);
+//    handleCommandMessage(msg);
   } else if (String(topic) == topicSchedule) {
-    handleScheduleMessage(msg);
+//    handleScheduleMessage(msg);
   }
 }
 
