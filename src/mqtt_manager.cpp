@@ -9,6 +9,11 @@ PubSubClient mqttClient(espClient);
 // Store topic subscriptions
 const char* topicCmd = nullptr;
 const char* topicSchedule = nullptr;
+const char* mqttUserId = nullptr;
+const char* mqttPass = nullptr;
+
+const MqttCallbackEntry* callbackEntries = nullptr;
+int entryCount = 0;
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
   String msg;
@@ -16,27 +21,34 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     msg += (char)payload[i];
   }
 
-  if (String(topic) == topicCmd) {
-//    handleCommandMessage(msg);
-  } else if (String(topic) == topicSchedule) {
-//    handleScheduleMessage(msg);
+  String topicStr(topic);
+  for (int i = 0; i < entryCount; ++i) {
+    if (String(callbackEntries[i].topic) == topicStr && callbackEntries[i].callback) {
+      callbackEntries[i].callback(topicStr, msg);
+      return;
+    }
   }
+
+  Serial.print("No callback for topic: ");
+  Serial.println(topicStr);
 }
 
 void reconnect() {
   while (!mqttClient.connected()) {
     Serial.print("Connecting to MQTT...");
-    String clientId = "aquarium-";
+
+    String clientId = "aquarium-ESPClient-";
     clientId += String(random(0xffff), HEX);
 
-    // These should be securely injected via GitHub Secrets or defined elsewhere
-    const char* mqttUser = getenv("HIVEMQ_USERNAME");
-    const char* mqttPass = getenv("HIVEMQ_PASSWORD");
-
-    if (mqttClient.connect(clientId.c_str(), mqttUser, mqttPass)) {
+    if (mqttClient.connect(clientId.c_str(), mqttUserId, mqttPass)) {
       Serial.println("connected");
-      mqttClient.subscribe(topicCmd);
-      mqttClient.subscribe(topicSchedule);
+
+      // Re-subscribe to topics
+      for (int i = 0; i < entryCount; ++i) {
+        mqttClient.subscribe(callbackEntries[i].topic);
+        Serial.print("Subscribed to: ");
+        Serial.println(callbackEntries[i].topic);
+      }
     } else {
       Serial.print("failed, rc=");
       Serial.print(mqttClient.state());
@@ -46,15 +58,14 @@ void reconnect() {
   }
 }
 
-void setupMQTT(const char* cmdTopic, const char* scheduleTopic) {
-  topicCmd = cmdTopic;
-  topicSchedule = scheduleTopic;
+void initMQTT(const char* broker, const char* userId, const char* password, int port, const MqttCallbackEntry* entries, int count) {
+  callbackEntries = entries;
+  entryCount = count;
 
-  // Set your MQTT broker credentials and address
-  const char* mqttServer = getenv("HIVEMQ_BROKER_URL");
-  int mqttPort = 8883;
+  mqttUserId = userId;
+  mqttPass = password;
 
-  mqttClient.setServer(mqttServer, mqttPort);
+  mqttClient.setServer(broker, port);
   mqttClient.setCallback(mqttCallback);
 }
 
