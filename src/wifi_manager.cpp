@@ -27,6 +27,10 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
+  Serial.print("SSID and Password: ");
+  Serial.print(ssid);
+  Serial.print("/");
+  Serial.println(password);
   Serial.print("Connecting to WiFi...");
   int retryCount = 0;
 
