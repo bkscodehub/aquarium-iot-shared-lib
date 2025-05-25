@@ -11,8 +11,8 @@ PubSubClient mqttClient(espClient);
 static char ca_cert[] = nullptr;
 
 // Store MQTT broker config
-const char* mqtt_server = nullptr;
-const int mqtt_port = nullptr;
+char* mqtt_server = nullptr;
+int mqtt_port;
 const char* topicCmd = nullptr;
 const char* topicSchedule = nullptr;
 const char* mqttUserId = nullptr;
