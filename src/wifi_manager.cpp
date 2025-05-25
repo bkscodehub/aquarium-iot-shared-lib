@@ -31,8 +31,10 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
   int retryCount = 0;
 
   while (WiFi.status() != WL_CONNECTED && retryCount < 20) {
-    delay(500);
+    delay(1000); // Increase delay
     Serial.print(WiFi.status());
+    Serial.print("WiFi Signal Strength: ");
+    Serial.println(WiFi.RSSI()); // Returns dBm (e.g., -70)
     Serial.print(".");
     retryCount++;
     yield();  // Allows background tasks to run
