@@ -25,11 +25,9 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
   onFailCallback = onFail;
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  Serial.println("\nScanning for WiFi networks...");
 
   int numNetworks = WiFi.scanNetworks();
+  Serial.println("\nScanning for WiFi networks...");
   Serial.print("Number of networks found: ");
   Serial.println(numNetworks);
   for (int i = 0; i < numNetworks; i++) {
@@ -41,6 +39,10 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
     Serial.println(" dBm)");
   }
 
+  Serial.print("Primary network - ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi...");
   int retryCount = 0;
 
