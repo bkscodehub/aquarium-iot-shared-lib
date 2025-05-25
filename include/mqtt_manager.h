@@ -15,7 +15,7 @@ struct MqttCallbackEntry {
 };
 
 // Called by application to register topics + callbacks
-void initMQTT(const char *broker, const char *userId, const char *password, int port, const MqttCallbackEntry *entries, int count);
+void initMQTT(const char *broker, const char *userId, const char *password, int port, static const char ca_cert[] ssl_cert, const MqttCallbackEntry *entries, int count);
 
 //void setupMQTT(const char* cmdTopic, const char* scheduleTopic);
 void loopMQTT();
