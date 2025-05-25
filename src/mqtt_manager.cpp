@@ -8,7 +8,7 @@ BearSSL::WiFiClientSecure espClient;
 PubSubClient mqttClient(espClient);
 
 // HiveMQ Cloud Let's Encrypt CA certificate (hardcoded)
-static char ca_cert* = nullptr;
+static char* ca_cert = nullptr;
 
 // Store MQTT broker config
 char* mqtt_server = nullptr;
@@ -82,7 +82,7 @@ void setClock() {
   Serial.print(asctime(&timeinfo));
 }
 
-void initMQTT(const char* broker, const char* userId, const char* password, int port, const char ssl_cert*, const MqttCallbackEntry* entries, int count) {
+void initMQTT(const char* broker, const char* userId, const char* password, int port, const char* ssl_cert, const MqttCallbackEntry* entries, int count) {
   callbackEntries = entries;
   entryCount = count;
 
