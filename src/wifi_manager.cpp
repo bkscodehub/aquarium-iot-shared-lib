@@ -32,8 +32,10 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
 
   while (WiFi.status() != WL_CONNECTED && retryCount < 20) {
     delay(500);
+    Serial.print(WiFi.status());
     Serial.print(".");
     retryCount++;
+    yield();  // Allows background tasks to run
   }
   randomSeed(micros());
   
