@@ -27,6 +27,20 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
+  Serial.println("\nScanning for WiFi networks...");
+
+  int numNetworks = WiFi.scanNetworks();
+  Serial.print("Number of networks found: ");
+  Serial.println(numNetworks);
+  for (int i = 0; i < numNetworks; i++) {
+    Serial.print(i + 1);
+    Serial.print(": ");
+    Serial.print(WiFi.SSID(i));
+    Serial.print(" (Signal Strength: ");
+    Serial.print(WiFi.RSSI(i));
+    Serial.println(" dBm)");
+  }
+
   Serial.print("Connecting to WiFi...");
   int retryCount = 0;
 
