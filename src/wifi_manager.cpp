@@ -25,42 +25,26 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
   onFailCallback = onFail;
 
   WiFi.mode(WIFI_STA);
-
-  int numNetworks = WiFi.scanNetworks();
-  Serial.println("\nScanning for WiFi networks...");
-  Serial.print("Number of networks found: ");
-  Serial.println(numNetworks);
-  for (int i = 0; i < numNetworks; i++) {
-    Serial.print(i + 1);
-    Serial.print(": ");
-    Serial.print(WiFi.SSID(i));
-    Serial.print(" (Signal Strength: ");
-    Serial.print(WiFi.RSSI(i));
-    Serial.println(" dBm)");
-  }
-
-  Serial.print("Primary network - ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
+  WiFi.begin(wifiSsid, wifiPassword);
   Serial.print("Connecting to WiFi...");
-  int retryCount = 0;
 
+  int retryCount = 0;
   while (WiFi.status() != WL_CONNECTED && retryCount < 20) {
     delay(1000); // Increase delay
-    Serial.print(WiFi.status());
-    Serial.print("WiFi Signal Strength: ");
-    Serial.println(WiFi.RSSI()); // Returns dBm (e.g., -70)
     Serial.print(".");
     retryCount++;
     yield();  // Allows background tasks to run
   }
-  randomSeed(micros());
   
   if (WiFi.status() == WL_CONNECTED) {
+    randomSeed(micros());
     Serial.println("\nWiFi connected!");
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
+    Serial.print("Status: ");
+    Serial.print(WiFi.status());
+    Serial.print(", WiFi Signal Strength: ");
+    Serial.println(WiFi.RSSI()); // Returns dBm (e.g., -70)
 
     if (ledPin != -1) digitalWrite(ledPin, LOW); // turn LED on (connected)
 
