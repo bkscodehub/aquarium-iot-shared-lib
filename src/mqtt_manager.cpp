@@ -8,10 +8,11 @@ BearSSL::WiFiClientSecure espClient;
 PubSubClient mqttClient(espClient);
 
 // HiveMQ Cloud Let's Encrypt CA certificate (hardcoded)
-static char* ca_cert = nullptr;
+static const char* ca_cert = nullptr;
 
 // Store MQTT broker config
-char* mqtt_server = nullptr;
+const char* mqtt_server = nullptr;
+
 int mqtt_port;
 const char* topicCmd = nullptr;
 const char* topicSchedule = nullptr;
