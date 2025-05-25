@@ -82,7 +82,7 @@ void setClock() {
   Serial.print(asctime(&timeinfo));
 }
 
-void initMQTT(const char* broker, const char* userId, const char* password, int port, static const char ssl_cert[], const MqttCallbackEntry* entries, int count) {
+void initMQTT(const char* broker, const char* userId, const char* password, int port, const char ssl_cert[], const MqttCallbackEntry* entries, int count) {
   callbackEntries = entries;
   entryCount = count;
 
