@@ -44,8 +44,8 @@ void reconnect() {
   while (!mqttClient.connected()) {
     Serial.print("Connecting to MQTT...");
 
-    String clientId = "aquarium-ESPClient-";
-    clientId += String(random(0xffff), HEX);
+    String clientId = "aquariumESPClient-" + String(ESP.getChipId());
+    clientId += "-" + String(random(0xffff), HEX);
 
     if (mqttClient.connect(clientId.c_str(), mqttUserId, mqttPass)) {
       Serial.println("connected");
@@ -67,8 +67,7 @@ void reconnect() {
 
 // Time has to be obtained from NTP, because of CA expiration date validation.
 void setClock() {
-  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
-
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");  // Keep UTC
   Serial.print("Waiting for NTP time sync: ");
   time_t now = time(nullptr);
   while (now < 8 * 3600 * 2) {
@@ -79,7 +78,7 @@ void setClock() {
   Serial.println("");
   struct tm timeinfo;
   gmtime_r(&now, &timeinfo);
-  Serial.print("Current time: ");
+  Serial.print("Current time (UTC): ");
   Serial.print(asctime(&timeinfo));
 }
 
@@ -116,4 +115,13 @@ void publishMessage(const char* topic, const ArduinoJson::DynamicJsonDocument& d
   char buffer[256];
   serializeJson(doc, buffer);
   mqttClient.publish(topic, buffer);
+}
+
+String getTimestamp() {
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  gmtime_r(&now, &timeinfo); // Get UTC time
+  char buffer[25];
+  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%SZ", &timeinfo);  // ISO 8601 UTC format
+  return String(buffer);
 }

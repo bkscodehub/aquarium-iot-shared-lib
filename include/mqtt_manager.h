@@ -20,5 +20,6 @@ void initMQTT(const char *broker, const char *userId, const char *password, int 
 //void setupMQTT(const char* cmdTopic, const char* scheduleTopic);
 void loopMQTT();
 void publishMessage(const char* topic, const ArduinoJson::DynamicJsonDocument& doc);
+String getTimestamp();  // Get datetime in UTC
 
 #endif
