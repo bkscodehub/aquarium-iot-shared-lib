@@ -117,11 +117,28 @@ void publishMessage(const char* topic, const ArduinoJson::DynamicJsonDocument& d
   mqttClient.publish(topic, buffer);
 }
 
+// Timestamp in IST
 String getTimestamp() {
   time_t now = time(nullptr);
   struct tm timeinfo;
-  gmtime_r(&now, &timeinfo); // Get UTC time
+  localtime_r(&now, &timeinfo); // Get local time (IST)
   char buffer[25];
-  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%SZ", &timeinfo);  // ISO 8601 UTC format
+  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S+05:30", &timeinfo);  // ISO 8601 IST format
   return String(buffer);
+}
+
+int getHourNow() {
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);  // Retrieves local time (IST if configured)
+
+  return timeinfo.tm_hour;
+}
+
+int getMinuteNow() {
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);  // Retrieves local time (IST if configured)
+  
+  return timeinfo.tm_min;
 }
