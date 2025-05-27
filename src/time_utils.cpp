@@ -3,7 +3,8 @@
 
 // Time has to be obtained from NTP, because of CA expiration date validation.
 void setClock() {
-    configTime(0, 0, "pool.ntp.org", "time.nist.gov");  // Keep UTC
+    configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+    // configTime(0, 0, "pool.ntp.org", "time.nist.gov");  // Keep UTC
     Serial.print("Waiting for NTP time sync: ");
     time_t now = time(nullptr);
     while (now < 8 * 3600 * 2) {
