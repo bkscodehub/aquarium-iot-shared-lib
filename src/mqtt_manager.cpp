@@ -41,6 +41,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 }
 
 void reconnect() {
+  char err_buf[256];
   while (!mqttClient.connected()) {
     Serial.print("Connecting to MQTT...");
 
@@ -57,9 +58,14 @@ void reconnect() {
         Serial.println(callbackEntries[i].topic);
       }
     } else {
-      Serial.print("failed, rc=");
+      Serial.print("ESP Client Id (");
+      Serial.print(clientId);
+      Serial.print(") failed to connect, rc=");
       Serial.print(mqttClient.state());
-      Serial.println(". Retrying in 5s...");
+      espClient.getLastSSLError(err_buf, sizeof(err_buf));
+      Serial.print("SSL error: ");
+      Serial.println(err_buf);
+      Serial.println("Retrying in 5s...");
       delay(5000);
     }
   }
@@ -78,6 +84,8 @@ void initMQTT(const char* broker, const char* userId, const char* password, int 
   Serial.print("Connecting to MQTT Broker: ");
   Serial.println(broker);
 
+  Serial.print("CA cert: ");
+  Serial.println(ca_cert);
   BearSSL::X509List *serverTrustedCA = new BearSSL::X509List(ca_cert);
   espClient.setTrustAnchors(serverTrustedCA);
   setClock(); // Required for X.509 validation
