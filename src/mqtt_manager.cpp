@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include "mqtt_manager.h"
-#include <time.h>          // For NTP
+#include <time_utils.h>          // For NTP
 
 BearSSL::WiFiClientSecure espClient;
 PubSubClient mqttClient(espClient);
@@ -65,23 +65,6 @@ void reconnect() {
   }
 }
 
-// Time has to be obtained from NTP, because of CA expiration date validation.
-void setClock() {
-  configTime(0, 0, "pool.ntp.org", "time.nist.gov");  // Keep UTC
-  Serial.print("Waiting for NTP time sync: ");
-  time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2) {
-    delay(500);
-    Serial.print(".");
-    now = time(nullptr);
-  }
-  Serial.println("");
-  struct tm timeinfo;
-  gmtime_r(&now, &timeinfo);
-  Serial.print("Current time (UTC): ");
-  Serial.print(asctime(&timeinfo));
-}
-
 void initMQTT(const char* broker, const char* userId, const char* password, int port, const char* ssl_cert, const MqttCallbackEntry* entries, int count) {
   callbackEntries = entries;
   entryCount = count;
@@ -115,30 +98,4 @@ void publishMessage(const char* topic, const ArduinoJson::DynamicJsonDocument& d
   char buffer[256];
   serializeJson(doc, buffer);
   mqttClient.publish(topic, buffer);
-}
-
-// Timestamp in IST
-String getTimestamp() {
-  time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo); // Get local time (IST)
-  char buffer[25];
-  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S+05:30", &timeinfo);  // ISO 8601 IST format
-  return String(buffer);
-}
-
-int getHourNow() {
-  time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);  // Retrieves local time (IST if configured)
-
-  return timeinfo.tm_hour;
-}
-
-int getMinuteNow() {
-  time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);  // Retrieves local time (IST if configured)
-  
-  return timeinfo.tm_min;
 }
