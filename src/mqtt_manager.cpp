@@ -30,7 +30,9 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
   String topicStr(topic);
   Serial.print("Message received on topic: ");
-  Serial.println(topicStr);
+  Serial.print(topicStr);
+  Serial.print(", Message: ");
+  Serial.println(msg);
   for (int i = 0; i < entryCount; ++i) {
     if (String(callbackEntries[i].topic) == topicStr && callbackEntries[i].callback) {
       callbackEntries[i].callback(topicStr, msg);
@@ -48,12 +50,12 @@ void reconnect() {
     Serial.print("Connecting to MQTT...");
 
     String clientId = "aquariumESPClient-" + String(ESP.getChipId());
-    clientId += "-" + String(random(0xffff), HEX);
+    // clientId += "-" + String(random(0xffff), HEX);
 
     if (mqttClient.connect(clientId.c_str(), mqttUserId, mqttPass)) {
       Serial.print(clientId);
       Serial.print(" connected");
-      Serial.print(". State=");
+      Serial.print(", State=");
       Serial.println(mqttClient.state());
 
       // Re-subscribe to topics
@@ -80,14 +82,13 @@ void reconnect() {
 void initMQTT(const char* broker, const char* userId, const char* password, int port, const char* ssl_cert, const MqttCallbackEntry* entries, int count) {
   callbackEntries = entries;
   entryCount = count;
-
   mqttUserId = userId;
   mqttPass = password;
   ca_cert = ssl_cert;
   mqtt_server = broker;
   mqtt_port = port;
 
-  Serial.print("Connecting to MQTT Broker: ");
+  Serial.print("Initializing connection to MQTT Broker: ");
   Serial.println(broker);
 
   BearSSL::X509List *serverTrustedCA = new BearSSL::X509List(ca_cert);
@@ -96,18 +97,11 @@ void initMQTT(const char* broker, const char* userId, const char* password, int 
   mqttClient.setServer(broker, port);
   mqttClient.setCallback(mqttCallback);
 
-  Serial.println("Connected to MQTT Broker! Callbacks registered.");
+  Serial.println("Callbacks registered.");
 }
 
 void loopMQTT() {
-  Serial.print("At ");
-  Serial.print(getTimestamp());
-  Serial.print(", is already connected to HiveMQ? ");
-  Serial.print(mqttClient.connected());
-  Serial.print(", State:");
-  Serial.println(mqttClient.state());
   if (!mqttClient.connected()) {
-
     char err_buf[256];
     espClient.getLastSSLError(err_buf, sizeof(err_buf));
     Serial.print("SSL error: ");
@@ -120,10 +114,9 @@ void loopMQTT() {
 
 void publishMessage(const char* topic, const ArduinoJson::DynamicJsonDocument& doc) {
   Serial.print("Publishing message to topic: ");
-  Serial.println(topic);
-  // Serialize and print JSON
-  Serial.print("Message: ");
-  serializeJson(doc, Serial);
+  Serial.print(topic);
+  Serial.print(", Message: ");
+  serializeJson(doc, Serial);  // Serialize and print JSON
   Serial.println();  // Ensure a new line for better readability
 
   char buffer[256];

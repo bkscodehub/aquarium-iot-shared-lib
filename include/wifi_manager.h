@@ -4,6 +4,8 @@
 #include <ESP8266WiFi.h>
 #include <functional>
 
+#define WIFI_LED_PIN 2  // GPIO2 for onboard LED (or change to an external pin)
+
 typedef std::function<void()> WiFiCallback;
 
 void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnect = nullptr, WiFiCallback onFail = nullptr);

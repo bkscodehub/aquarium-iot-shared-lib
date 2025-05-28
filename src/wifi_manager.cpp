@@ -46,7 +46,7 @@ void connectToWiFi(const char* ssid, const char* password, WiFiCallback onConnec
     Serial.print(", WiFi Signal Strength: ");
     Serial.println(WiFi.RSSI()); // Returns dBm (e.g., -70)
 
-    if (ledPin != -1) digitalWrite(ledPin, LOW); // turn LED on (connected)
+    if (ledPin != -1) digitalWrite(ledPin, LOW); // turn LED low (connected)
 
     if (onConnectCallback) {
       onConnectCallback();
