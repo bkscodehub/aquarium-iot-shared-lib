@@ -51,7 +51,8 @@ void reconnect() {
     clientId += "-" + String(random(0xffff), HEX);
 
     if (mqttClient.connect(clientId.c_str(), mqttUserId, mqttPass)) {
-      Serial.print("connected");
+      Serial.print(clientId);
+      Serial.print(" connected");
       Serial.print(". State=");
       Serial.println(mqttClient.state());
 
@@ -61,6 +62,7 @@ void reconnect() {
         Serial.print("Subscribed to: ");
         Serial.println(callbackEntries[i].topic);
       }
+      mqttClient.setKeepAlive(60);  // Set keep-alive to 60 seconds
     } else {
       Serial.print("ESP Client Id (");
       Serial.print(clientId);
