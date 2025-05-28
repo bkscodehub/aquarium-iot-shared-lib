@@ -29,6 +29,8 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   }
 
   String topicStr(topic);
+  Serial.print("Message received on topic: ");
+  Serial.println(topicStr);
   for (int i = 0; i < entryCount; ++i) {
     if (String(callbackEntries[i].topic) == topicStr && callbackEntries[i].callback) {
       callbackEntries[i].callback(topicStr, msg);
