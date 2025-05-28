@@ -51,7 +51,9 @@ void reconnect() {
     clientId += "-" + String(random(0xffff), HEX);
 
     if (mqttClient.connect(clientId.c_str(), mqttUserId, mqttPass)) {
-      Serial.println("connected");
+      Serial.print("connected");
+      Serial.print(". State=");
+      Serial.println(mqttClient.state());
 
       // Re-subscribe to topics
       for (int i = 0; i < entryCount; ++i) {
@@ -97,8 +99,16 @@ void initMQTT(const char* broker, const char* userId, const char* password, int 
 
 void loopMQTT() {
   Serial.print("Is already connected to HiveMQ: ");
-  Serial.println(mqttClient.connected());
+  Serial.print(mqttClient.connected());
+  Serial.print(", State:");
+  Serial.println(mqttClient.state());
   if (!mqttClient.connected()) {
+    
+    char err_buf[256];
+    espClient.getLastSSLError(err_buf, sizeof(err_buf));
+    Serial.print("SSL error: ");
+    Serial.println(err_buf);
+
     reconnect();
   }
   mqttClient.loop();
