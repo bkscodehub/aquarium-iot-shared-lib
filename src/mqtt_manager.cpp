@@ -98,12 +98,14 @@ void initMQTT(const char* broker, const char* userId, const char* password, int 
 }
 
 void loopMQTT() {
-  Serial.print("Is already connected to HiveMQ: ");
+  Serial.print("At ");
+  Serial.print(getTimestamp());
+  Serial.print(", is already connected to HiveMQ? ");
   Serial.print(mqttClient.connected());
   Serial.print(", State:");
   Serial.println(mqttClient.state());
   if (!mqttClient.connected()) {
-    
+
     char err_buf[256];
     espClient.getLastSSLError(err_buf, sizeof(err_buf));
     Serial.print("SSL error: ");
