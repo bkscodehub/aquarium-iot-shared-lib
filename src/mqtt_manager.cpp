@@ -86,8 +86,6 @@ void initMQTT(const char* broker, const char* userId, const char* password, int 
   Serial.print("Connecting to MQTT Broker: ");
   Serial.println(broker);
 
-  Serial.print("CA cert: ");
-  Serial.println(ca_cert);
   BearSSL::X509List *serverTrustedCA = new BearSSL::X509List(ca_cert);
   espClient.setTrustAnchors(serverTrustedCA);
   setClock(); // Required for X.509 validation
@@ -98,6 +96,8 @@ void initMQTT(const char* broker, const char* userId, const char* password, int 
 }
 
 void loopMQTT() {
+  Serial.print("Is already connected to HiveMQ: ");
+  Serial.println(mqttClient.connected());
   if (!mqttClient.connected()) {
     reconnect();
   }
@@ -105,7 +105,15 @@ void loopMQTT() {
 }
 
 void publishMessage(const char* topic, const ArduinoJson::DynamicJsonDocument& doc) {
+  Serial.print("Publishing message to topic: ");
+  Serial.println(topic);
+  // Serialize and print JSON
+  Serial.print("Message: ");
+  serializeJson(doc, Serial);
+  Serial.println();  // Ensure a new line for better readability
+
   char buffer[256];
   serializeJson(doc, buffer);
   mqttClient.publish(topic, buffer);
+  Serial.println("Published message successfully");
 }
