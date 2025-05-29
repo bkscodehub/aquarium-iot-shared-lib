@@ -29,19 +29,38 @@ String getTimestamp() {
     return String(buffer);
   }
   
-  int getHourNow() {
+int getHourNow() {
     time_t now = time(nullptr);
     struct tm timeinfo;
     localtime_r(&now, &timeinfo);  // Retrieves local time (IST if configured)
   
     return timeinfo.tm_hour;
-  }
+}
   
-  int getMinuteNow() {
+int getMinuteNow() {
     time_t now = time(nullptr);
     struct tm timeinfo;
     localtime_r(&now, &timeinfo);  // Retrieves local time (IST if configured)
     
     return timeinfo.tm_min;
-  }
-    
+}
+
+// Function to check if the current time falls within the range
+bool isTimeInRange(int onHour, int onMinute, int offHour, int offMinute) {
+    time_t now = time(nullptr);
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);  // Get local time (IST)
+
+    int currentMinutes = timeinfo.tm_hour * 60 + timeinfo.tm_min;
+    int onMinutes = onHour * 60 + onMinute;
+    int offMinutes = offHour * 60 + offMinute;
+
+    // Case 1: Time range does NOT span midnight (Example: 10:30 - 18:30)
+    if (onMinutes <= offMinutes) {
+        return currentMinutes >= onMinutes && currentMinutes < offMinutes;
+    }
+    // Case 2: Time range spans midnight (Example: 22:00 - 05:30)
+    else {
+        return currentMinutes >= onMinutes || currentMinutes < offMinutes;
+    }
+}
