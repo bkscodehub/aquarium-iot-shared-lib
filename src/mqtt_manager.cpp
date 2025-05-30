@@ -126,17 +126,14 @@ void loopMQTT()
 
 void publishMessage(const char *topic, const ArduinoJson::DynamicJsonDocument &doc)
 {
-  if (mqttClient.connected())
-  {
-    Serial.print("Publishing message to topic: ");
-    Serial.print(topic);
-    Serial.print(", Message: ");
-    serializeJson(doc, Serial); // Serialize and print JSON
-    Serial.println();           // Ensure a new line for better readability
+  Serial.print("Publishing message to topic: ");
+  Serial.print(topic);
+  Serial.print(", Message: ");
+  serializeJson(doc, Serial); // Serialize and print JSON
+  Serial.println();           // Ensure a new line for better readability
 
-    char buffer[256];
-    serializeJson(doc, buffer);
-    mqttClient.publish(topic, buffer);
-    Serial.println("Published message successfully");
-  }
+  char buffer[256];
+  serializeJson(doc, buffer);
+  mqttClient.publish(topic, buffer);
+  Serial.println("Published message successfully");
 }
