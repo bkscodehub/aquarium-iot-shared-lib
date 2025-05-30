@@ -2,12 +2,13 @@
 #include <time.h> // For NTP
 
 // Time has to be obtained from NTP, because of CA expiration date validation.
+// Set system time to IST (UTC+5:30)
 void setClock()
 {
-  configTime(5 * 3600 + 1800, 0, "pool.ntp.org", "time.nist.gov"); // Set system time to IST (UTC+5:30)
-  // configTime(0, 0, "pool.ntp.org", "time.nist.gov");  // Keep UTC
-  Serial.print("Waiting for NTP time sync: ");
+  // Set timezone to IST (UTC+5:30)
+  configTime("IST-5:30", "pool.ntp.org", "time.nist.gov");
 
+  Serial.print("Waiting for NTP time sync: ");
   time_t now = time(nullptr);
   while (now < 8 * 3600 * 2)
   {
@@ -15,7 +16,8 @@ void setClock()
     Serial.print(".");
     now = time(nullptr);
   }
-  Serial.println("");
+  Serial.println();
+
   struct tm timeinfo;
   gmtime_r(&now, &timeinfo);
   Serial.print("Current time (UTC): ");
@@ -27,9 +29,9 @@ String getTimestamp()
 {
   time_t now = time(nullptr);
   struct tm timeinfo;
-  localtime_r(&now, &timeinfo); // Get local time (IST)
-  char buffer[25];
-  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S+05:30", &timeinfo); // ISO 8601 IST format
+  localtime_r(&now, &timeinfo);                                       // Get local time (IST)
+  char buffer[32];                                                    // Increased buffer size
+  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S%z", &timeinfo); // ISO 8601 format with timezone
   return String(buffer);
 }
 
@@ -38,7 +40,6 @@ int getHourNow()
   time_t now = time(nullptr);
   struct tm timeinfo;
   localtime_r(&now, &timeinfo); // Retrieves local time (IST if configured)
-
   return timeinfo.tm_hour;
 }
 
@@ -47,7 +48,6 @@ int getMinuteNow()
   time_t now = time(nullptr);
   struct tm timeinfo;
   localtime_r(&now, &timeinfo); // Retrieves local time (IST if configured)
-
   return timeinfo.tm_min;
 }
 
